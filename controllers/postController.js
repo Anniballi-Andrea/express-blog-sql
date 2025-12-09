@@ -1,6 +1,6 @@
 const posts = require("../data/posts")
 
-//const connection = require('../database/db-posts')
+const connection = require('../database/db-posts')
 
 const index = (req, res) => {
 
