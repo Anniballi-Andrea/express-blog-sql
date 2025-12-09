@@ -18,6 +18,7 @@ const show = (req, res) => {
     const id = Number(req.params.id)
 
     const sql = 'SELECT * FROM posts WHERE id = ?'
+    const tagsSql = 'SELECT* FROM tags JOIN post_tag ON post_tag.tag_id = tags.id WHERE post_tag.post_id = ?'
 
     connection.query(sql, [id], (err, results) => {
         if (err) {
@@ -26,7 +27,15 @@ const show = (req, res) => {
             return res.status(404).json({ error: true, message: 'Post Not Found' })
         }
 
-        res.json(results)
+        const post = results[0]
+
+        connection.query(tagsSql, [id], (err, tagsResults) => {
+            if (err) return res.status(500).json({ error: true, message: 'err.message' })
+            post.tags = tagsResults
+
+
+            res.json(post)
+        })
     })
 
 
