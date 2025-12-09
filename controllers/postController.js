@@ -4,20 +4,12 @@ const connection = require('../database/db-posts')
 
 const index = (req, res) => {
 
-    if (req.query.tags) {
+    const sql = 'SELECT * FROM posts'
 
-        let tag = req.query.tags
-        tag = tag[0].toUpperCase() + tag.slice(1)
-
-        const filtredPost = posts.filter(el => el.tags.includes(tag))
-
-        return res.json(filtredPost)
-    }
-
-
-    res.json(posts)
-
-
+    connection.query(sql, (err, results) => {
+        if (err) return res.status(500).json({ error: 'database query failed' })
+        res.json(results)
+    })
 
 }
 
