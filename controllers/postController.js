@@ -25,6 +25,7 @@ const show = (req, res) => {
         } else if (results.length === 0) {
             return res.status(404).json({ error: true, message: 'Post Not Found' })
         }
+
         res.json(results)
     })
 
