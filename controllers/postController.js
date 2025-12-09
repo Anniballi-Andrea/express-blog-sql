@@ -1,4 +1,4 @@
-const posts = require("../data/posts")
+
 
 const connection = require('../database/db-posts')
 
@@ -7,7 +7,8 @@ const index = (req, res) => {
     const sql = 'SELECT * FROM posts'
 
     connection.query(sql, (err, results) => {
-        if (err) return res.status(500).json({ error: 'database query failed' })
+        if (err) return res.status(500).json({ error: true, message: err.message })
+
         res.json(results)
     })
 
@@ -15,58 +16,20 @@ const index = (req, res) => {
 
 const show = (req, res) => {
     const id = Number(req.params.id)
-
-
-
-    const post = posts.find(post => post.id === id)
-
-    if (!post) {
-        res.status(404)
-        return res.json({
-            error: "Not found",
-            message: "post non trovato"
-        })
-    }
-
-    res.json(post)
+    res.send(`your trying modify a part of a single post with id: ${req.params.id}`)
 
 }
 
 const store = (req, res) => {
+    res.send(`your trying modify a part of a single post with id: ${req.params.id}`)
 
-    const newId = posts[posts.length - 1].id + 1
-    const newPost = {
-        id: newId,
-        title: req.body.title,
-        content: req.body.content,
-        image: req.body.image,
-        tags: req.body.tags,
-    }
-    posts.push(newPost)
-    res.status(201)
-    res.send(newPost)
 
 }
 
 const update = (req, res) => {
-    const id = Number(req.params.id)
-
-    const post = posts.find(post => post.id === id)
-
-    if (!post) {
-        res.status(404)
-        return res.json({
-            error: "Not found",
-            message: "post non trovato"
-        })
-    }
-    post.title = req.body.title
-    post.content = req.body.content
-    post.image = req.body.image
-    post.tags = req.body.tags
 
 
-    res.json(post)
+    res.send(`your trying modify a part of a single post with id: ${req.params.id}`)
 }
 
 const modify = (req, res) => {
@@ -76,23 +39,34 @@ const modify = (req, res) => {
 const destroy = (req, res) => {
     const id = Number(req.params.id)
 
-    const post = posts.find(post => post.id === id)
+    const sql = 'DELETE FROM posts WHERE id = ?'
 
-    if (!post) {
-        res.status(404)
-        return res.json({
-            error: "Not found",
-            message: "post non trovato"
-        })
-    }
+    console.log(sql, id)
 
-    posts.splice(posts.indexOf(post), 1)
+    connection.query(sql, [id], (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: true, message: err.message })
+        } else if (results.affectedRows == 0) {
+            console.log(results)
+            return res.sendStatus(404)
+        }
+        return res.sendStatus(204)
+    })
 
 
-
-
-    res.sendStatus(204)
 }
+// const id = Number(req.params.id)
+
+// const sql = 'DELETE FROM posts WHERE id = ?'
+// console.log(sql, id)
+
+// connection.query(sql, [id], (err, results) => {
+//     if (err) return res.status(500).json({ error: true, message: err.message })
+//     console.log(results);
+//     return res.sendStatus(204)
+// })
+
+
 
 module.exports = {
     index,
